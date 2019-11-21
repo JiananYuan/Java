@@ -1,0 +1,70 @@
+class food {
+    public int food = 10;
+    int i;
+    String s;
+    public void show() {
+        System.out.println(s + " runs at "+ i+ " m");
+        if(food > 0) {
+            food--;
+            System.out.println(s + " eats " + i + " th food, remaining " + food + " food");
+        }
+    }
+}
+
+class MyThread {
+    public static void main(String[] args) {
+        MyThread t = new MyThread();
+        t.go();
+    }
+    public void go() {
+        food f1 = new food();
+        tortoise t = new tortoise(f1);
+        rabbit   r = new rabbit  (f1);
+        Thread a = new Thread(t);
+        Thread b = new Thread(r);
+        a.start();
+        b.start();
+    }
+}
+
+class tortoise extends Thread {
+    int i; food fd;
+    public tortoise(food fd) {
+        this.fd = fd;
+    }
+    public void run() {
+        for(i = 1;i < 11; i++) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            synchronized (fd) {
+                fd.i = i;
+                fd.s = "tortoise";
+                fd.show();
+            }
+        }
+    }
+}
+
+class rabbit extends Thread {
+    int i; food fd;
+    public rabbit (food fd) {
+        this.fd = fd;
+    }
+    public void run() {
+        for(i = 1;i < 11; i++) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            synchronized (fd) {
+                fd.i = i;
+                fd.s = "rabbit";
+                fd.show();
+            }
+        }
+    }
+}
