@@ -1,0 +1,40 @@
+public class MyThread {
+    private int food = 10;
+    public static void main(String[] args) {
+        MyThread mt = new MyThread();
+        mt.go();
+    }
+    public void go() {
+        tortoise t = new tortoise();
+        rabbit r = new rabbit();
+        t.start();
+        r.start();
+    }
+    class tortoise extends Thread {
+        int i = 0, f = 0;
+        public void run() {
+            for(i = 1;i<=10;i++) {
+                System.out.println("the tortoise has run at "+ i + "m");
+                if(food > 0) {
+                    food--;
+                    f++;
+                    System.out.println("the tortoise eats " + i + "th food, remaining "+ food + " food");
+                }
+            }
+        }
+    }
+
+    class rabbit extends Thread {
+        int i = 0, f = 0;
+        public void run() {
+            for(i = 1;i<=10;i++) {
+                System.out.println("the rabbit has run at "+ i + "m");
+                if(food > 0) {
+                    food--;
+                    f++;
+                    System.out.println("the rabbit eats " + i + "th food, remaining "+ food + " food");
+                }
+            }
+        }
+    }
+}
