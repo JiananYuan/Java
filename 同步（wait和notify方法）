@@ -1,0 +1,74 @@
+class synqueue {
+    private int front = 0, rear = 0;
+    final static int MaxSize = 6;
+    private char b[] = new char[MaxSize];
+
+    synchronized void enqueue(char c) {
+        if ((rear + 1) % MaxSize == front) {
+            try {
+                this.wait();
+            } catch (InterruptedException e){}
+        }
+        this.notify();
+        rear = (rear + 1) % MaxSize;
+        b[rear] = c;
+    }
+
+    synchronized char outqueue() {
+        if(front == rear) {
+            try {
+                this.wait();
+            } catch (InterruptedException e){}
+        }
+        this.notify();
+        front = (front + 1) % MaxSize;
+        return b[front];
+    }
+}
+
+class producer implements Runnable {
+    synqueue sq;
+    producer(synqueue sq) {
+        this.sq = sq;
+    }
+    public void run() {
+        char c;
+        for(int i =0 ;i < 20 ;i++) {
+            c = (char)(Math.random()*26 + 'A');
+            sq.enqueue(c);
+            System.out.println("producer" + c);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {}
+        }
+    }
+}
+
+class consumer implements Runnable {
+    synqueue sq;
+    consumer(synqueue sq) {
+        this.sq = sq;
+    }
+    public void run() {
+        char c;
+        for(int i =0 ;i < 20 ;i++) {
+            c = sq.outqueue();
+            System.out.println("consumer" + c);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {}
+        }
+    }
+}
+
+public class MyThread {
+    public static void main(String[] args) {
+        synqueue sq = new synqueue();
+        producer p = new producer(sq);
+        consumer c = new consumer(sq);
+        Thread tp = new Thread(p);
+        Thread tc = new Thread(c);
+        tp.start();
+        tc.start();
+    }
+}
