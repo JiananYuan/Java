@@ -1,0 +1,32 @@
+public class MyThread {
+    public static void main(String[] args) {
+        tortoise t = new tortoise();
+        rabbit r = new rabbit();
+        Thread t1 = new Thread(t);
+        Thread t2 = new Thread(r);
+        t2.start();
+        t1.start();
+    }
+}
+
+class rabbit implements Runnable {
+    public void run() {
+        //try {
+        //    Thread.sleep(5000);
+        //} catch(InterruptedException e) {}
+        for(int i = 1;i<=10;i++) {
+            System.out.println("the rabbit has run at "+ i + "m");
+            if(i == 5) {
+                Thread.yield();
+            }
+        }
+    }
+}
+
+class tortoise implements Runnable {
+    public void run() {
+        for(int i = 1;i<=10;i++) {
+            System.out.println("the tortoise has run at "+ i + "m");
+        }
+    }
+}
