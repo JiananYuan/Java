@@ -1,0 +1,42 @@
+import java.io.*;
+import java.net.*;
+
+public class Net {
+    public static void main(String[] args) {
+        try {
+            ServerSocket ss = new ServerSocket(80);
+            System.out.println("Web Server OK!");
+            while(true) {
+                Socket s = ss.accept();
+                vebserv v = new vebserv(s);
+                Thread t = new Thread(v);
+                t.start();
+            }
+        } catch(Exception e) {}
+    }
+}
+
+class vebserv implements Runnable {
+    Socket s;
+    static int i;
+    public vebserv(Socket s1) {
+        s = s1;
+    }
+    public void run() {
+        try {
+            PrintStream out = new PrintStream(s.getOutputStream());
+            BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            String info = in.readLine();
+            System.out.println("now get: " + info);
+            out.println("HTTP/1.0");
+            out.println("Content_Type: text/html");
+            i++;
+            String c = "<html><head><title>Java Web</title></head><body><h1>hi this is " + i + "</h1></body></html>";
+            out.println();
+            out.println(c);
+            out.close();
+            s.close();
+            in.close();
+        } catch(Exception e) {}
+    }
+}
