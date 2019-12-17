@@ -1,0 +1,56 @@
+import java.net.*;
+import java.io.*;
+import java.util.Scanner;
+
+class server {
+    public static void main(String[] args) {
+        try {
+            ServerSocket ss = new ServerSocket(4321);
+            System.out.println("Server OK");
+            while(true) {
+                Socket s = ss.accept();
+                serv p = new serv(s);
+                Thread t = new Thread(p);
+                t.start();
+            }
+        } catch(IOException E) {}
+    }
+}
+
+class serv implements Runnable {
+    Socket s;
+    static int i;
+    public serv(Socket s1) {
+        s = s1;
+    }
+    public void run() {
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            String info = in.readLine();
+            ++i;
+            System.out.println("info from client " + i);
+            PrintStream out = new PrintStream(s.getOutputStream());
+            out.println("You are number " + i);
+            in.close();
+            out.close();
+            s.close();
+        } catch (IOException e) {}
+    }
+}
+
+class client {
+    public static void main(String[] args) {
+        try {
+            Socket s = new Socket("127.0.0.1",4321);
+            PrintStream out = new PrintStream(s.getOutputStream());
+            String c = "ACM";
+            out.println(c);
+            BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            String x = in.readLine();
+            System.out.println("Info from Server: " + x);
+            out.close();
+            in.close();
+            s.close();
+        } catch(IOException e) {}
+    }
+}
