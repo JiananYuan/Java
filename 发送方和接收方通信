@@ -1,0 +1,43 @@
+import java.net.*;
+import java.io.*;
+
+class Sender {
+    public static void main(String[] args) {
+        DatagramPacket dp = null;
+        DatagramSocket ds = null;
+        try {
+            ds = new DatagramSocket(3000);
+        } catch(IOException e) {}
+        String str = "hello world! ";
+        try {
+            dp = new DatagramPacket(str.getBytes(),str.length(),InetAddress.getByName("localhost"),9000);
+        } catch (UnknownHostException e) {}
+        try {
+            ds.send(dp);
+        } catch(IOException e) {}
+        ds.close();
+    }
+}
+
+class Reciever {
+    public static void main(String[] args) {
+        DatagramSocket ds = null;
+        byte[] buf = new byte[1024];
+        DatagramPacket dp = null, dp1 = null;
+        try {
+            ds = new DatagramSocket(9000);
+        } catch(SocketException e) {}
+        dp = new DatagramPacket(buf,1024);
+        try {
+            ds.receive(dp);
+        } catch(IOException e) {}
+        String str = new String(dp.getData(),0,dp.getLength()) + " from " + dp.getAddress().getHostAddress() + ":" + dp.getPort();
+        System.out.println(str);
+        String s = "I have received!";
+        try {
+            dp1 = new DatagramPacket(s.getBytes(),s.length(),InetAddress.getByName("localhost"),3000);
+            ds.send(dp1);
+        } catch(IOException e) {}
+        ds.close();
+    }
+}
