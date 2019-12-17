@@ -23,3 +23,20 @@ public class Main {
   }
 }
 
+文件输入输出：
+
+import java.io.*;
+public class Net {
+    public static void main(String[] args) throws java.io.IOException{
+        FileInputStream fin = new FileInputStream("C:\\Users\\Jianan Yuan\\Pictures\\a00af28fefbdfb1c0fddd2b02b1fe0c.jpg");
+        FileOutputStream fout = new FileOutputStream("123.jpg",true);
+        int len;
+        byte b[] = new byte[1024];
+        while((len = fin.read(b))!=-1) {
+            fout.write(b,0,len);
+        }
+        fin.close();
+        fout.close();
+    }
+}
+
