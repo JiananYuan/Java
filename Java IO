@@ -1,0 +1,25 @@
+java.io 包中的输入输出流
+
+基于字节流的：
+InputStream（声明了基于字节的输入方法）  -> FileInputStream（文件输入）   ObjectInputStream（对象输入）
+OutputStream（声明了基于字节的输出方法） -> FileOutputStream（文件输出）  ObjectOutputStream（对象输出）
+
+基于字符流的：
+Reader（声明了基于字符的输入方法） -> BufferedReader（带缓冲区读字符流）  InputStreamReader（字节流与字符流的转换）  FileReader（读写字符文件）
+Writer（声明了基于字符的输出方法） -> BufferedWriter（带缓冲区写字符流）  OutputStreamWriter（字节流与字符流的转换） FileWriter（读写字符文件）
+
+Object -> InputStream  OutputStream  Reader  Writer  File  RandomAccessFile（随机文件）
+
+基于字符的输入输出：
+
+import java.io.*;
+public class Main {
+  public static void main(String[] args) {
+    String s;
+    BufferedReader ln = new BufferedReader(new InputStreamReader(System.in));
+    while((s = readLine()) != null) {
+      System.out.println("read: " + s);
+    }
+  }
+}
+
