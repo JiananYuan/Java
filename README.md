@@ -271,4 +271,103 @@ instanceof
 
 8.3 接口
 
+接口数据成员都是静态的且必须初始化，方法必须全部是abstract的
+
+不能多继承，但可多接口
+
+8.4 内部类
+
+	class Group {
+	    private int age;
+	    public class Student {
+	        String name;
+	        public Student(String n,int a) {
+	            name = n;
+	            age = a;
+	        }
+	        public void output() {
+	            System.out.println("姓名：" + this.name + "；年龄：" + age);
+	        }
+	    }
+	    public void output() {
+	        Student stu = new Student("QAQ",24);
+	        stu.output();
+	    }
+	    public static void main(String[] args) {
+	        Group g = new Group();
+	        g.output();
+	    }
+	}
+
+------
+
+	public class Main {
+	    public static void main(String[] args) {
+	        (
+	                new Inner() {
+	                    void setName(String n) {
+	                        name = n;
+	                        System.out.println(name);
+	                    }
+	                }
+	                ).setName("Li Hua");
+	    }
+	    static class Inner {
+	        String name;
+	    }
+	}
+
+8.5 包
+
+	import sun.util.resources.cldr.aa.CalendarData_aa_ER;
+
+	import java.util.Calendar;
+	import java.util.Random;
+	
+	public class Main {
+	    public static void main(String[] args) {
+	        Calendar today = Calendar.getInstance();
+	        int y = today.get(Calendar.YEAR);
+	        int m = today.get(Calendar.MONTH);
+	        int d = today.get(Calendar.DATE);
+	        System.out.println("今天是" + y + "年" + (m+1) + "月" + d + "日");
+	        System.out.println((new Random()).nextFloat());
+	    }
+	}
+
+8.6 Java语言的垃圾回收
+
+<br>
+## Chapter 9 异常处理
+
+
+
+## Chapter 10 Java IO和文件
+
+
+
+## Chapter 11 多线程
+
+
+
+## Chapter 12 泛型和容器类
+
+
+
+## Chapter 13 图形界面设计
+
+
+## Chapter 14 事件处理
+
+
+## Chapter 15 绘图程序设计
+
+
+## Chapter 16 小程序设计
+
+
+## Chapter 17 Java数据库程序设计
+
+
+## Chapter 18 Java网络编程
 
