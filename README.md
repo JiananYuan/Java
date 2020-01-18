@@ -1,6 +1,5 @@
 # Java
 <br>
-
 ## Chapter 1 Java语言概述
 1.1 Java语言的诞生和发展
 
@@ -72,6 +71,201 @@ Scanner...
 
 ## Chapter 5 数组与字符串
 
+5.1 数组的基本概念
 
+在堆中创建了一个数组或对象之后，同时还在栈中定义了一个特殊的变量，让栈中的这个变量的取值等于数组或对象在堆内存中的首地址，栈中的这个变量成了数组或变量的引用变量（句柄）
 
+5.2 一维数组
+
+内置方法：
+
+public static int binarySearch(X[] a,X key)
+
+public static void sort(X[] a)
+
+public static void sort(X[] a,int fromIndex,int toIndex)
+
+public static X[] copyof( X[] original,int newLength)
+
+public static boolean equals(X[] a,X[] a2)
+
+for-each 语法
+
+杨辉三角：
+
+	import java.util.Scanner;
+
+	public class Main {
+	    private static Scanner in;
+	    private static int[][] a;
+	    public static void main(String[] args) {
+	        in = new Scanner(System.in);
+	        a = new int[11][11];
+	        a[1][1] = 1;
+	        for(int i = 2;i <= 10;i++) {
+	            for(int j=1;j <= i;j++) {
+	                a[i][j] = a[i-1][j-1] + a[i-1][j];
+	            }
+	        }
+	        for(int i=1;i<=10;i++) {
+	            for(int j=1;j<=i;j++) {
+	                System.out.print(a[i][j] + " ");
+	            }
+	            System.out.println();
+	        }
+	    }
+	}
+
+5.3 多维数组
+
+5.4 三维以上多维数组
+
+5.5 字符串
+
+方法：
+
+public int length()
+
+public boolean equals (Object anObject)
+
+public String substring(int beginIndex)
+
+public String substring(int beginIndex,int endIndex)
+
+public char charAt(int index)
+
+public int indexOf(String str)
+
+public int compareTo(String anotherString)
+
+public String replace(char oldChar,char newChar)
+
+public String trim()
+
+public String toLowerCase()
+
+public String toUpperCase()
+
+## Chapter 6，7，8 面向对象
+
+6.1 类的基本概念
+
+6.2 定义类
+
+6.3 对象的创建与使用
+
+6.4 参数的传递
+
+6.5 匿名对象
+
+7.1 类的私有成员和公有成员
+
+注：缺省访问标识符：若在类成员的前面不加任何访问控制符，表示这个成员只能被同一个包（类库）中的类访问和调用。
+
+7.2 方法的重载
+
+7.3 构造方法
+
+7.4 静态成员
+
+7.5 对象的应用
+
+对象赋值之后，当参数是基本参数类型的时候，则是传值方式调用；而当参数是引用变量时，则是传址方式调用。
+
+8.1 类的继承（单继承）
+
+Object类
+
+equals() 
+
+toString()
+
+instanceof
+
+	class Person {
+	    protected String name;
+	    protected int age;
+	    public Person(String name,int age) {
+	        this.name = name;
+	        this.age = age;
+	    }
+	    protected void show() {
+	        System.out.println("姓名：" + name + "年龄：" + age);
+	    }
+	}
+	
+	class Student extends Person {
+	    private String department;
+	    public Student(String name,int age,String dep) {
+	        super(name,age);
+	        department = dep;
+	    }
+	    protected void show() {
+	        System.out.println("系别：" + department);
+	    }
+	}
+	
+	public class Main {
+	    public static void main(String[] args) {
+	        Student stu  = new Student("JiananYuan",20,"CSSE");
+	        stu.show();
+	    }
+	}
+
+8.2 抽象类
+
+	import com.sun.org.apache.regexp.internal.REDebugCompiler;
+
+	abstract class Shape {
+	    protected String name;
+	    public Shape(String xm) {
+	        name = xm;
+	        System.out.println("姓名：" + name);
+	    }
+	    abstract public double getArea();
+	    abstract public double getLength();
+	}
+	
+	class Circle extends Shape {
+	    private final double PI = 3.14;
+	    private double radius;
+	    public Circle(String name,double r) {
+	        super(name);
+	        radius = r;
+	    }
+	    public double getArea() {
+	        return PI * radius * radius;
+	    }
+	    public double getLength() {
+	        return 2 * PI * radius;
+	    }
+	}
+	
+	class Rectangle extends Shape {
+	    private double width,height;
+	    public Rectangle(String name,double width,double height) {
+	        super(name);
+	        this.width = width;
+	        this.height = height;
+	    }
+	    public double getArea() {
+	        return width * height;
+	    }
+	    public double getLength() {
+	        return 2 * (width + height);
+	    }
+	}
+	
+	public class Main {
+	    public static void main(String[] args) {
+	        Shape rect = new Rectangle("长方形",6.5,10.3);
+	        System.out.println(";面积: " + rect.getArea());
+	        System.out.println(";周长: " + rect.getLength());
+	        Shape circle = new Circle("长方形",10.2);
+	        System.out.println(";面积: " + circle.getArea());
+	        System.out.println(";周长: " + circle.getLength());
+	    }
+	}
+
+8.3 接口
 
