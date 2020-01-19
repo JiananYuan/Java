@@ -340,6 +340,170 @@ instanceof
 <br>
 ## Chapter 9 异常处理
 
+9.1 异常处理的基本概念
+
+9.2 异常处理类
+
+![异常类](https://www.png8.com/imgs/2020/01/e3e267d099493e48.png)
+
+
+9.3 异常的处理
+
+基本格式：try - catch - finally
+
+	import jdk.nashorn.internal.runtime.arrays.ArrayIndex;
+
+	public class Main {
+	    public static void main(String[] agrs) {
+	        int i;
+	        int[] a = {1,2,3,4};
+	        for(i=0;i<5;i++) {
+	            try {
+	                System.out.println(a[i]/i);
+	            }
+	            catch(ArrayIndexOutOfBoundsException e) {
+	                System.out.println("捕获到了数组下标越界异常");
+	            }
+	            catch(ArithmeticException e) {
+	                System.out.println("异常类名称是：" + e);
+	            }
+	            catch(Exception e) {
+	                System.out.println("捕获" + e.getMessage() + "异常!");
+	            }
+	            finally {
+	                System.exit(1);
+	            }
+	        }
+	        System.out.println("继续...");
+	    }
+	}
+
+
+9.4 抛出异常
+
+1. 抛出异常的方法与调用方法处理异常
+
+例子1
+
+	public class Main {
+	    public static void main(String[] args) {
+	        int a = 5, b = 0;
+	        try {
+	            if(b == 0) {
+	                throw new ArithmeticException();
+	            } else {
+	                System.out.println(a/b);
+	            }
+	        } catch(ArithmeticException e) {
+	            System.out.println(e);
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+例子2
+
+	import java.text.NumberFormat;
+	import java.util.jar.JarOutputStream;
+	
+	public class Main {
+	    public static double multi(int n) {
+	        if(n < 0) throw new IllegalArgumentException("求负数阶乘异常");
+	        double s = 1;
+	        for(int i=1;i<=n;i++) s *= i;
+	        return s;
+	    }
+	    public static void main(String[] agrs) {
+	        try {
+	            int m = Integer.parseInt(agrs[0]);
+	            System.out.println(multi(m));
+	        } catch(ArrayIndexOutOfBoundsException e) {
+	            System.out.println("命令行没有提供参数");
+	        } catch(NumberFormatException e) {
+	            System.out.println("应该输入一个整数");
+	        } catch(IllegalArgumentException e) {
+	            System.out.println(e.toString());
+	        } finally {
+	            System.out.println("end");
+	        }
+	    }
+	}
+
+例子3
+
+	import java.text.NumberFormat;
+
+	public class Main {
+	    static void check(String str1) throws NullPointerException {
+	        if(str1.length() > 2) {
+	            str1 = null;
+	            System.out.println(str1.length());
+	        }
+	        char ch;
+	        for(int i=0;i<str1.length();i++) {
+	            ch = str1.charAt(i);
+	            if(!Character.isDigit(ch)) {
+	                throw new NumberFormatException();
+	            }
+	        }
+	    }
+	
+	    public static void main(String[] agrs) throws Exception {
+	        int num;
+	        try {
+	            check(agrs[0]);
+	            num = Integer.parseInt(agrs[0]);
+	            if(num > 60) {
+	                System.out.println("pass");
+	            } else {
+	                System.out.println("failed");
+	            }
+	        } catch(NullPointerException e) {
+	            System.out.println("null pointer exception occurred");
+	        } catch(NumberFormatException e) {
+	            System.out.println("format of data wrong");
+	        } catch(Exception e) {
+	            System.out.println("no argument in cmd");
+	        }
+	    }
+	}
+
+9.5 自定义异常类
+
+	class CircleException extends Exception {
+	    double radius;
+	    CircleException(double r) {
+	        radius = r;
+	    }
+	    public String toString() {
+	        return "半径r = " + radius + "不是一个正数";
+	    }
+	}
+	
+	class Circle {
+	    private double radius;
+	    public void setRadius(double r) throws CircleException {
+	        if(r < 0) throw new CircleException(r);
+	        else      radius = r;
+	    }
+	    public void show() {
+	        System.out.println("圆面积：" + Math.PI * radius * radius);
+	    }
+	}
+	
+	public class Main {
+	    public static void main(String[] agrs) throws CircleException{
+	        Circle cir = new Circle();
+	        cir.setRadius(-2);
+	        cir.show();
+	    }
+	}
+
+通过本章的讨论，可以看出对异常的处理不外乎两种方式：
+
+1. 在方法内使用try - catch 语句来处理方法本身所产生的异常
+
+2. 在方法声明的头部使用throws语句或在方法内使用throw语句将它送往上一层调用机构去处理。
 
 
 ## Chapter 10 Java IO和文件
