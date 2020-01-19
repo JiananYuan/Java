@@ -1,0 +1,99 @@
+// Main.java
+
+import javax.swing.*;
+
+public class Main {
+    public static void main(String[] agrs) {
+        MyFrame frame = new MyFrame("gpa");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(350,750);
+        frame.setVisible(true);
+    }
+}
+
+// MyFrame.java
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Calendar;
+
+public class MyFrame extends JFrame {
+    final int num = 15;
+    JTextField[] subjectName = new JTextField[num];
+    JTextField[] subjectCredit = new JTextField[num];
+    JComboBox<String>[] subjectGrade = new JComboBox[num];
+
+    public MyFrame(String name) {
+        super(name);
+        Container cta = getContentPane();
+        cta.setLayout(new FlowLayout());
+        for(int i=0;i < num;i++) {
+            subjectGrade[i] = new JComboBox<>();
+            subjectGrade[i].addItem("A+");
+            subjectGrade[i].addItem("A");
+            subjectGrade[i].addItem("B+");
+            subjectGrade[i].addItem("B");
+            subjectGrade[i].addItem("C+");
+            subjectGrade[i].addItem("C");
+            subjectGrade[i].addItem("D");
+            subjectGrade[i].addItem("F");
+            subjectGrade[i].setToolTipText("请选择等级");
+
+            subjectName[i] = new JTextField(16);
+            subjectName[i].setToolTipText("请输入科目名" + (i+1));
+
+            subjectCredit[i] = new JTextField(5);
+            subjectCredit[i].setToolTipText("请输入课程学分");
+        }
+
+        for(int i=0;i < num;i++) {
+            cta.add(subjectName[i]);
+            cta.add(subjectCredit[i]);
+            cta.add(subjectGrade[i]);
+        }
+
+        JButton jb = new JButton("确定");
+        cta.add(jb);
+        jb.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Calculate();
+            }
+        });
+    }
+
+    public void Calculate() {
+        double totalCredit = 0;
+        double totalGpa = 0;
+        int i = 0;
+        for(i=0;i < num;i++) {
+            if(subjectName[i].getText().equals("")) {
+                break;
+            }
+            String str = (String)subjectGrade[i].getSelectedItem();
+            if(str.equals("A+")) {
+                totalGpa += 4.5 * Double.parseDouble("" + subjectCredit[i].getText());
+            } else if(str.equals("A")) {
+                totalGpa += 4.0 * Double.parseDouble("" + subjectCredit[i].getText());
+            } else if(str.equals("B+")) {
+                totalGpa += 3.5 * Double.parseDouble("" + subjectCredit[i].getText());
+            } else if(str.equals("B")) {
+                totalGpa += 3.0 * Double.parseDouble("" + subjectCredit[i].getText());
+            } else if(str.equals("C+")) {
+                totalGpa += 2.5 * Double.parseDouble("" + subjectCredit[i].getText());
+            } else if(str.equals("C")) {
+                totalGpa += 2.0 * Double.parseDouble("" + subjectCredit[i].getText());
+            } else if(str.equals("D")) {
+                totalGpa += 1.0 * Double.parseDouble("" + subjectCredit[i].getText());
+            } else {
+                totalGpa += 0.0 * Double.parseDouble("" + subjectCredit[i].getText());
+            }
+            totalCredit += Double.parseDouble("" + subjectCredit[i].getText());
+        }
+        String out = "";
+        out += "本学期一共修了" + (i) + "门科目。\n";
+        out += "平均绩点为：" + (totalGpa/totalCredit);
+        JOptionPane.showMessageDialog(this,out);
+    }
+}
