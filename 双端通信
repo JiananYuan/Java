@@ -1,0 +1,148 @@
+// Server.java
+
+import com.sun.security.ntlm.Server;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class MyServer implements Runnable{
+    ServerSocket server = null;
+    Socket clientSocket;
+    boolean flag = true;
+    Thread connectThread;
+    BufferedReader sin;
+    DataOutputStream sout;
+    @Override
+    public void run() {
+        while(true) {
+            try {
+                int ch;
+                while((ch = System.in.read()) != -1) {
+                    sout.write((byte)ch);
+                    if(ch == '\n') {
+                        sout.flush();
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    public void serverStart() throws Exception {
+        server = new ServerSocket(8080);
+        System.out.println("端口号：" + server.getLocalPort());
+        while(flag) {
+            clientSocket = server.accept();
+            System.out.println("连接已建立");
+            InputStream is = clientSocket.getInputStream();
+            sin = new BufferedReader(new InputStreamReader(is));
+            OutputStream os = clientSocket.getOutputStream();
+            sout = new DataOutputStream(os);
+            connectThread = new Thread(this);
+            connectThread.start();
+            String str;
+            while((str = sin.readLine()) != null) {
+                System.out.println(str);
+                if(str.equals("bye")) {
+                    flag = false;
+                    connectThread.interrupt();
+                    break;
+                }
+            }
+            sout.close();
+            os.close();
+            sin.close();
+            is.close();
+            clientSocket.close();
+            System.exit(0);
+        }
+    }
+
+    public void finalize() {
+        try {
+            server.close();
+        } catch(IOException e) {
+            System.out.println(e);
+        }
+    }
+
+    public static void main(String[] agrs) {
+        MyServer MS = new MyServer();
+        try{
+            MS.serverStart();
+        } catch(Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+
+// Client.java
+
+import com.sun.security.ntlm.Server;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class MyClient implements Runnable{
+    Socket clientSocket;
+    boolean flag = true;
+    Thread connectThread;
+    BufferedReader cin;
+    DataOutputStream cout;
+    @Override
+    public void run() {
+        while(true) {
+            try {
+                int ch;
+                while((ch = System.in.read()) != -1) {
+                    cout.write((byte)ch);
+                    if(ch == '\n') {
+                        cout.flush();
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    public void clientStart() throws Exception {
+        clientSocket = new Socket("localhost",8080);
+        System.out.println("连接已建立");
+        while(flag) {
+            InputStream is = clientSocket.getInputStream();
+            cin = new BufferedReader(new InputStreamReader(is));
+            OutputStream os = clientSocket.getOutputStream();
+            cout = new DataOutputStream(os);
+            connectThread = new Thread(this);
+            connectThread.start();
+            String str;
+            while((str = cin.readLine()) != null) {
+                System.out.println(str);
+                if(str.equals("bye")) {
+                    flag = false;
+                    connectThread.interrupt();
+                    break;
+                }
+            }
+            cout.close();
+            os.close();
+            cin.close();
+            is.close();
+            clientSocket.close();
+            System.exit(0);
+        }
+    }
+
+    public static void main(String[] agrs) {
+        try{
+            new MyClient().clientStart();
+        } catch(Exception e) {
+            System.out.println(e);
+        }
+    }
+}
