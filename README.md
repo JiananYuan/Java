@@ -520,18 +520,325 @@ instanceof
 
 ## Chapter 13 图形界面设计
 
+13.1 图形用户界面概述
+
+13.2 图形用户界面工具包 —— Swing
+ 
+	// 基本框架演示
+
+	// MyFrame.java
+
+	import javax.swing.*;
+	import java.awt.*;
+	import java.awt.event.ActionEvent;
+	import java.awt.event.ActionListener;
+	import java.text.SimpleDateFormat;
+	import java.util.Date;
+	
+	public class MyFrame extends JFrame {
+	    JLabel timeLabel = new JLabel("00:00:00");
+	    JButton button = new JButton("显示时间");
+	
+	    public MyFrame(String s) {
+	        super(s);
+	        Container contentPane = getContentPane();
+	        contentPane.setLayout(new FlowLayout());
+	        contentPane.add(button);
+	        showTime();
+	        contentPane.add(timeLabel);
+	        button.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                showTime();
+	            }
+	        });
+	    }
+	
+	    public void showTime() {
+	        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+	        String timestr = sdf.format(new Date());
+	        timeLabel.setText(timestr);
+	    }
+	}
+
+
+	// Main
+	import javax.swing.*;
+	
+	public class Main {
+	    private static void CreateGUI() {
+	        MyFrame frame = new MyFrame("Swing Demo");
+	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        frame.setSize(400,300);
+	        frame.setVisible(true);
+	    }
+	
+	    public static void main(String[] args) {
+	        CreateGUI();
+	    }
+	}
+
+示例
+
+	
+
+	import javax.swing.*;
+	import java.awt.*;
+	import java.awt.event.ActionEvent;
+	import java.awt.event.ActionListener;
+	
+	public class MyFrame extends JFrame {
+	    JComboBox<String> colorList = new JComboBox<>();
+	    JLabel label = new JLabel(" 文本示例 This is a Sample");
+	
+	    public MyFrame(String name) {
+	        super(name);
+	        Container cta = getContentPane();
+	        cta.setLayout(new FlowLayout());
+	        cta.add(colorList);
+	        cta.add(label);
+	        colorList.addItem("red");
+	        colorList.addItem("blue");
+	        colorList.addItem("green");
+	        update();
+	        colorList.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                update();
+	            }
+	        });
+	    }
+	
+	    public void update() {
+	        String color = (String)colorList.getSelectedItem();
+	        Color c = null;
+	        if(color.equals("red")) {
+	            c = Color.RED;
+	        } else if(color.equals("green")) {
+	            c = Color.GREEN;
+	        } else {
+	            c = Color.BLUE;
+	        }
+	        label.setForeground(c);
+	    }
+	}
+
+示例
+
+	import javax.swing.*;
+	import java.awt.*;
+	
+	public class MyFrame extends JFrame {
+	    private JLabel jl1 = new JLabel("hello java!");
+	    private JLabel jl2 = new JLabel("文本示例");
+	
+	    public MyFrame(String name) {
+	        super(name);
+	        Container cta = getContentPane();
+	        cta.setLayout(new SampleLayout());
+	        cta.add(jl1);
+	        cta.add(jl2);
+	    }
+	
+	    private class SampleLayout implements LayoutManager {
+	
+	        @Override
+	        public void addLayoutComponent(String name, Component comp) {
+	
+	        }
+	
+	        @Override
+	        public void removeLayoutComponent(Component comp) {
+	
+	        }
+	
+	        @Override
+	        public Dimension preferredLayoutSize(Container parent) {
+	            return null;
+	        }
+	
+	        @Override
+	        public Dimension minimumLayoutSize(Container parent) {
+	            return null;
+	        }
+	
+	        @Override
+	        public void layoutContainer(Container parent) {
+	            int w = parent.getWidth();
+	            int h = parent.getHeight();
+	            System.out.println("father: " + w + "," + h);
+	            if(jl1.isVisible()) {
+	                Dimension size = jl1.getPreferredSize();
+	                int x = (w - size.width) / 2;
+	                int y = (h - size.height) / 2;
+	                jl1.setBounds(x,y,size.width,size.height);
+	            }
+	            if(jl2.isVisible()) {
+	                Dimension size = jl2.getPreferredSize();
+	                int x = (w - size.width);
+	                int y = 0;
+	                jl2.setBounds(x,y,size.width,size.height);
+	            }
+	        }
+	    }
+	}
+
+示例
+
+	
+
+
+13.3 创建组件
+
+13.4 布局管理器
+
 
 ## Chapter 14 事件处理
+
+14.1 Java语言的事件处理机制 —— 委托事件模型
+
+14.2 Java语言的事件类
+
+14.3 适配器类
+
+14.4 命令按钮及相应的事件处理
+
+14.5 复选框、单选按钮相应的事件处理
+
+14.6 文本组件及相应的事件处理
+
+14.7 窗口组件及窗口事件处理
+
+14.8 对话框设计及相应的事件处理
+
+14.9 按键事件类及相应的事件处理
+
+14.10 鼠标事件类及相应的事件处理
+
+14.11 列表框及相应的事件处理
+
+14.12 组合框及相应的事件处理
+
+14.13 菜单设计
+
+14.14 工具栏设计
+
+14.15 滑动条设计及相应的事件处理
+
+14.16 文件选择对话框
+
+14.17 颜色选择对话框
+
+14.18 定时器
 
 
 ## Chapter 15 绘图程序设计
 
 
+
 ## Chapter 16 小程序设计
+
 
 
 ## Chapter 17 Java数据库程序设计
 
 
+
 ## Chapter 18 Java网络编程
+
+18.1 网络基础
+
+针对不同层次的网络通信，Java语言提供的网络功能有四大类：URL（面向应用层）,InetAddress（面向IP层），Socket，Datagram（面向传输层）
+
+18.2 URL编程
+
+	import java.io.BufferedReader;
+	import java.io.IOException;
+	import java.io.InputStreamReader;
+	import java.net.MalformedURLException;
+	import java.net.URL;
+	
+	public class Main {
+	    public static void main(String[] args) {
+	        try {
+	            URL url = new URL("http://www.edu.cn/index.html");
+	            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+	            String s;
+	            while((s = br.readLine()) != null) {
+	                System.out.println(s);
+	            }
+	        } catch(MalformedURLException e) {
+	            System.out.println(e);
+	        } catch(IOException e) {
+	            System.out.println(e);
+	        }
+	    }
+	}
+
+读取网络上的文件内容一般分3个步骤：
+
+创建URL对象，利用URL对象的openstream方法获得对应的InputStream对象，通过InputStream对象来读取文件内容
+
+18.3 用Java语言实现底层网络通信
+
+18.3.1 InetAddress程序设计
+
+public static InetAddress getByName(String name) // name --> InetAddress
+
+public static InetAddress getByAddress(String name) // ip --> InetAddress
+
+public static InetAddress getLocalHost()
+
+public byte[] getAddress()
+
+public String getHostAddress()
+
+public String getHostName()
+
+public String toString()
+
+
+18.3.2 基于连接的Socket通信程序设计
+
+Socket类的构造方法：
+
+public Socket(String host,int port)
+
+public Socket(InetAddress address,int port)
+
+public Socket(String host,int port,boolean stream)
+
+public Socket(InetAddress host,int port,boolean stream)
+
+常用方法：
+
+public InetAddress getInetAddress()
+
+public InetAddress getLocalAddress()
+
+public InputStream getInputStream()
+
+public OutputStream getOutputStream()
+
+public int getPort()
+
+public void setRecieveBufferSize()
+
+public int getRecieveBufferSize()
+
+SeverSocket类的构造方法：
+
+public SeverSocket(int port)
+
+public SeverSocket(int port,int backlog)
+
+Socket通信模式：
+
+1. 客户建立到服务器的套接字对象
+
+2. 建立接受客户套接字的服务器套接字
+
+
+
+18.3.3 无连接的数据报通信程序设计
 
