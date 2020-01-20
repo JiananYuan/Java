@@ -1,0 +1,9 @@
+try {
+    File f = new File("C:\\Users\\Jianan Yuan\\Desktop\\Delacey - Dream It Possible.wav");
+    AudioClip music = Applet.newAudioClip(f.toURI().toURL());
+    // music.play();
+    music.loop();
+    // cta.add((Component) music);
+} catch(Exception e) {
+    System.out.println(e);
+}
