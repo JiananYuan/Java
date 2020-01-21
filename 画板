@@ -1,0 +1,43 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseListener;
+import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseMotionListener;
+
+public class HandDrawView extends JPanel {
+    List<Point> curve = new ArrayList<>();
+    public HandDrawView() {
+        MyMouseListener li = new MyMouseListener();
+        addMouseListener(li);
+        addMouseMotionListener(li);
+    }
+
+    protected void paintComponent(Graphics g) {
+        g.setColor(Color.BLACK);
+        if(curve.size() < 2) {
+            return ;
+        } else {
+            Point p1 = curve.get(0);
+            for(int i=1;i<curve.size();i++) {
+                Point p2 = curve.get(i);
+                g.drawLine(p1.x,p1.y,p2.x,p2.y);
+                p1 = p2;
+            }
+        }
+    }
+
+    private class MyMouseListener extends MouseAdapter {
+        public void mousePressed(MouseEvent e) {
+            curve.clear();
+            curve.add(e.getPoint());
+        }
+        public void mouseDragged(MouseEvent e) {
+            curve.add(e.getPoint());
+            repaint();
+        }
+    }
+}
