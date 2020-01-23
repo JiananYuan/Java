@@ -508,6 +508,113 @@ instanceof
 
 ## Chapter 10 Java IO和文件
 
+![IO类关系图](https://www.png8.com/imgs/2020/01/52794b5f9772ce39.jpg)
+
+10.1 Java语言的输入输出类库
+
+10.2 使用Input和OutputStream流类
+
+1. 文件输入输出
+
+		import java.io.*;
+	
+		class Main {
+		    public static void main(String[] agrs) {
+		        FileInputStream fin;
+		        FileOutputStream fout;
+		        char ch;
+		        int data;
+		        try {
+		            fin = new FileInputStream(FileDescriptor.in);
+		            fout = new FileOutputStream("C:\\Users\\Jianan Yuan\\Desktop\\test.txt");
+		            System.out.println("输入，按 # 结束");
+		            while((ch = (char)fin.read()) != '#') {
+		                fout.write(ch);
+		            }
+		            fin.close();
+		            fout.close();
+		            System.out.println();
+		            fin = new FileInputStream("C:\\Users\\Jianan Yuan\\Desktop\\test.txt");
+		            fout = new FileOutputStream(FileDescriptor.out);
+		            while(fin.available() > 0) {
+		                data = fin.read();
+		                fout.write(data);
+		            }
+		            fin.close();
+		            fout.close();
+		        } catch(FileNotFoundException e) {
+		            System.out.println( "文件没找到");
+		        } catch(IOException e) {
+		            System.out.println("文件异常");
+		        }
+		    }
+		}
+
+------
+
+	import java.io.FileInputStream;
+	import java.io.FileOutputStream;
+	import java.io.IOException;
+	
+	class Main  {
+	    public static void main(String[] agrs) throws IOException {
+	        FileInputStream fin = new FileInputStream("C:\\Users\\Jianan Yuan\\Music\\Delacey - Dream It Possible.mp3");
+	        FileOutputStream fout = new FileOutputStream("C:\\Users\\Jianan Yuan\\Desktop\\copy.wav");
+	        System.out.println("size = " + fin.available());
+	        byte[] b = new byte[fin.available()];
+	        fin.read(b);
+	        fout.write(b);
+	        fin.close();
+	        fout.close();
+	
+	    }
+	}
+
+2. 顺序输入流
+
+3. 管道输入输出流
+
+4. 过滤输入输出流
+
+注意DataOutputStream和DataInputStream的灵活使用
+
+5. 标准输入输出
+
+10.3 使用Reader和Writer
+
+1. FileReader
+
+2. FileWriter
+
+3. BufferedReader
+
+		import java.io.BufferedReader;
+		import java.io.FileReader;
+		import java.io.IOException;
+		
+		public class Main {
+		    public static void main(String[] agrs) {
+		        String thisLine;
+		        int cnt = 0;
+		        try {
+		            BufferedReader buf = new BufferedReader(new FileReader("C:\\Users\\Jianan Yuan\\Desktop\\test.txt"));
+		            while((thisLine = buf.readLine()) != null) {
+		                cnt++;
+		                System.out.println(thisLine);
+		            }
+		            System.out.println("一共读取了" + cnt + "行");
+		            buf.close();
+		        } catch(IOException e) {
+		            System.out.println("读写异常");
+		        }
+		    }
+		}
+
+
+4. BufferedWriter
+
+10.4 文件的处理与随机访问
+
 
 
 ## Chapter 11 多线程
@@ -601,7 +708,7 @@ instanceof
 	        colorList.addItem("blue");
 	        colorList.addItem("green");
 	        update();
-	        colorList.addActionListener(new ActionListener() {
+	        colorList.addAct		ionListener(new ActionListener() {
 	            @Override
 	            public void actionPerformed(ActionEvent e) {
 	                update();
@@ -685,7 +792,324 @@ instanceof
 
 示例
 
+	import javax.swing.*;
+	import java.applet.Applet;
+	import java.applet.AudioClip;
+	import java.awt.*;
+	import java.awt.event.ActionEvent;
+	import java.awt.event.ActionListener;
+	import java.awt.event.MouseEvent;
+	import java.awt.event.MouseListener;
+	import java.io.File;
+	import java.net.MalformedURLException;
+	import java.net.URL;
 	
+	public class MyFrame extends JFrame {
+	    AudioClip auu ;
+	    public MyFrame(String name) {
+	        super(name);
+	        JPanel root = new JPanel();
+	        setContentPane(root);
+	        root.setLayout(new BorderLayout());
+	        JMenuBar menubar = new JMenuBar();
+	        setJMenuBar(menubar);
+	        JMenu fileMenu = new JMenu("文件");
+	        menubar.add(fileMenu);
+	        JMenuItem fileOpenCmd  = new JMenuItem("打开");
+	        JMenuItem fileSaveCmd  = new JMenuItem("保存");
+	        JMenuItem fileSaveAsCmd  = new JMenuItem("另存为...");
+	        fileMenu.add(fileOpenCmd);
+	        fileMenu.add(fileSaveCmd);
+	        fileMenu.add(fileSaveAsCmd);
+	        fileMenu.addSeparator();
+	        JMenuItem exit = new JMenuItem("退出");
+	        exit.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                System.exit(0); 
+	            }
+	        });
+	        fileMenu.add(exit);
+	
+	        JMenu help = new JMenu("帮助");
+	        JMenuItem about = new JMenuItem("关于");
+	        JMenuItem hhelp = new JMenuItem("打开帮助");
+	        help.add(about);
+	        help.addSeparator();
+	        help.add(hhelp);
+	        menubar.add(help);
+	
+	    }
+	}
+
+示例
+
+	import sun.plugin.javascript.navig.Image;
+
+	import javax.swing.*;
+	import java.applet.Applet;
+	import java.applet.AudioClip;
+	import java.awt.*;
+	import java.awt.event.ActionEvent;
+	import java.awt.event.ActionListener;
+	import java.awt.event.MouseEvent;
+	import java.awt.event.MouseListener;
+	import java.io.File;
+	import java.net.MalformedURLException;
+	import java.net.URL;
+	
+	public class MyFrame extends JFrame {
+	    public MyFrame(String name) {
+	        super(name);
+	        JPanel jp = new JPanel();
+	        setContentPane(jp);
+	        jp.setLayout(new BorderLayout());
+	        JToolBar jbt = new JToolBar();
+	        jbt.setFloatable(false);
+	        jp.add(jbt,BorderLayout.PAGE_START);
+	        jbt.add(toolButton("打开.png","file_open","open"));
+	        jbt.add(toolButton("保存.png","file_save","save"));
+	        jbt.add(toolButton("另存为.png","file_saveas","save as"));
+	        jbt.addSeparator();
+	        jbt.add(toolButton("帮助.png","file_help","help"));
+	        JLabel jl = new JLabel("123");
+	        jl.setIcon(new ImageIcon(("D:\\IDEA文件\\绩点计算器\\src\\icon\\香港地铁.png")));
+	        jp.add(jl,BorderLayout.CENTER);
+	
+	    }
+	
+	    protected JButton toolButton(String imageName,String action,String prompt) {
+	        URL imageURL = getClass().getResource("/icon/" + imageName);
+	        JButton jb = new JButton();
+	        jb.setActionCommand(action);
+	        jb.setToolTipText(prompt);
+	        jb.setIcon(new ImageIcon(imageURL));
+	        jb.setFocusPainted(false);
+	        jb.addActionListener(actionListener);
+	        return jb;
+	    }
+	
+	    private ActionListener actionListener = new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            String action  = e.getActionCommand();
+	            System.out.println(action);
+	            if(action.equals("file_open")) {
+	                JOptionPane.showMessageDialog(MyFrame.this,action);
+	            }
+	        }
+	    };
+	}
+
+示例
+
+	import sun.plugin.javascript.navig.Image;
+	
+	import javax.swing.*;
+	import java.applet.Applet;
+	import java.applet.AudioClip;
+	import java.awt.*;
+	import java.awt.event.*;
+	import java.io.File;
+	import java.net.MalformedURLException;
+	import java.net.URL;
+	
+	public class MyFrame extends JFrame {
+	    public MyFrame(String name) {
+	        super(name);
+	        JPanel jp = new JPanel();
+	        setContentPane(jp);
+	        jp.setLayout(new BorderLayout());
+	        JPopupMenu jpo = new JPopupMenu();
+	        jpo.add(createMenuItem("打开","file_open","打开.png"));
+	        jpo.add(createMenuItem("保存","file_save","保存.png"));
+	        jpo.add(createMenuItem("另存为","file_saveas","另存为.png"));
+	        jp.addMouseListener(new MouseAdapter() {
+	            @Override
+	            public void mouseClicked(MouseEvent e) {
+	                if(e.getButton() == MouseEvent.BUTTON3) {
+	                    jpo.show(e.getComponent(),e.getX(),e.getY());
+	                }
+	            }
+	        });
+	    }
+	
+	    protected JMenuItem createMenuItem(String name,String action,String path) {
+	        JMenuItem it = new JMenuItem(name);
+	        it.setActionCommand(action);
+	        it.addActionListener(actionListener);
+	        it.setIcon(new ImageIcon(getClass().getResource("/icon/" + path)));
+	        return it;
+	    }
+	
+	    private ActionListener actionListener = new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            String action = e.getActionCommand();
+	            System.out.println(action);
+	            if(action.equals("file_open")) {
+	                JOptionPane.showMessageDialog(MyFrame.this,action);
+	            }
+	        }
+	    };
+	}
+
+示例
+
+	import sun.plugin.javascript.navig.Image;
+
+	import javax.swing.*;
+	import java.applet.Applet;
+	import java.applet.AudioClip;
+	import java.awt.*;
+	import java.awt.event.*;
+	import java.io.File;
+	import java.net.MalformedURLException;
+	import java.net.URL;
+	
+	public class MyFrame extends JFrame {
+	    public MyFrame(String name) {
+	        super(name);
+	        JPanel jp = new JPanel();
+	        setContentPane(jp);
+	        jp.setLayout(new FlowLayout());
+	        JButton jb = new JButton("test");
+	        jp.add(jb);
+	        jb.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                String str = getUserInput();
+	                System.out.println("用户输入了: " + str);
+	            }
+	        });
+	    }
+	
+	    protected String getUserInput() {
+	        JDialog jd = new JDialog(this,"test",true);
+	        JPanel jp = new JPanel();
+	        jp.setLayout(new FlowLayout());
+	        jd.setContentPane(jp);
+	        JTextField jl = new JTextField(16);
+	        JButton jb = new JButton("confirm");
+	        jd.add(jl);
+	        jd.add(jb);
+	        jb.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                jd.setVisible(false);
+	            }
+	        });
+	        jd.setSize(300,100);
+	        jd.setVisible(true);
+	        String rec = jl.getText();
+	        return rec;
+	    }
+	}
+
+
+示例
+
+	import sun.plugin.javascript.navig.Image;
+
+	import javax.swing.*;
+	import javax.swing.border.Border;
+	import java.applet.Applet;
+	import java.applet.AudioClip;
+	import java.awt.*;
+	import java.awt.event.*;
+	import java.io.File;
+	import java.net.MalformedURLException;
+	import java.net.URL;
+	
+	public class MyFrame extends JFrame {
+	    public MyFrame(String name) {
+	        super(name);
+	        JPanel jp = new JPanel();
+	        jp.setLayout(new BorderLayout());
+	        setContentPane(jp);
+	        DefaultListModel<String> jl = new DefaultListModel<>();
+	        jl.addElement("123");
+	        // ... 
+	
+	        JList<String> jll= new JList<>();
+	        jll.setModel(jl);
+	        jll.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	
+	        JScrollPane js = new JScrollPane(jll);
+	
+	        jp.add(js,BorderLayout.CENTER);
+	
+	    }
+	}
+
+示例
+
+	import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory;
+
+	import javax.swing.*;
+	import javax.swing.event.TableModelListener;
+	import javax.swing.table.DefaultTableCellRenderer;
+	import javax.swing.table.DefaultTableModel;
+	import javax.swing.table.TableModel;
+	import java.awt.*;
+	import java.util.Vector;
+	
+	public class MyFrame extends JFrame {
+	
+	    DefaultTableModel tm = new DefaultTableModel();
+	
+	    public MyFrame (String name) {
+	        super(name);
+	        JPanel jp = new JPanel();
+	        jp.setLayout(new BorderLayout());
+	        setContentPane(jp);
+	
+	        Student stu[] = {new Student("19635","JiananYuan","male","大一","中国大陆"),
+	                new Student("10001","Cralim.K","female","研究生","美国加州"),
+	                new Student("15630","Maria Zheng","female","大二","中国香港")};
+	
+	        tm.addColumn("唯一编号");
+	        tm.addColumn("名字");
+	        tm.addColumn("性别");
+	        tm.addColumn("年级");
+	        tm.addColumn("地区");
+	
+	        for(int i=0;i<3;i++) {
+	            Vector<Object> v = new Vector<>();
+	            v.add(stu[i].num);
+	            v.add(stu[i].name);
+	            v.add(stu[i].sex);
+	            v.add(stu[i].grade);
+	            v.add(stu[i].area);
+	            tm.addRow(v);
+	        }
+	
+	        JTable jt = new JTable();
+	        jt.setModel(tm);
+	        jt.setFont(new Font("楷体",Font.BOLD,25));
+	        jt.getTableHeader().setFont(new Font("微软雅黑",0,25));
+	        jt.setFillsViewportHeight(true);
+	        jt.setRowHeight(30);
+	        // jt.setRowSelectionAllowed(true);
+	        JScrollPane js = new JScrollPane(jt);
+	        jp.add(js,BorderLayout.CENTER);
+	    }
+	}
+	
+	class Student {
+	    String num;
+	    String name;
+	    String sex;
+	    String grade;
+	    String area;
+	    Student(String a,String b,String c,String d,String e) {
+	        num = a;
+	        name = b;
+	        sex = c;
+	        grade = d;
+	        area = e;
+	    }
+	}
 
 
 13.3 创建组件
