@@ -1,3 +1,5 @@
+// 只有wav文件可用
+
 try {
     File f = new File("C:\\Users\\Jianan Yuan\\Desktop\\Delacey - Dream It Possible.wav");
     AudioClip music = Applet.newAudioClip(f.toURI().toURL());
