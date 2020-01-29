@@ -16,6 +16,33 @@ Java程序-----（编译）字节码-----（解释）本地机器码
 
 1.5 Java程序种类和结构：Application，Applet，主类是Java程序执行的入口点
 
+小程序示例：
+
+1. 编写Applet小程序：
+
+		import java.awt.*;
+		import javax.swing.JApplet;
+		
+		public class Main extends JApplet {
+			public void paint(Graphics g) {
+				g.drawString("Hello, Java",50,50);
+			}
+		}
+
+2. 编写html文件：
+
+		<Main.html>
+		<html>
+			<applet code = "Main.class"
+				width = "200"
+				height = "120"
+				alt = "sorry! Your Browser cannot support Java Applet!">
+			</applet>
+		</html>
+
+3. 打开PowerShell窗口，输入：AppletViewer ...html
+	
+
 ## Chapter 2 Java语言开发环境
 
 2.1 Java开发工具（JDK）
@@ -147,6 +174,55 @@ public String trim()
 public String toLowerCase()
 
 public String toUpperCase()
+
+单词划分：
+
+	import java.util.ArrayList;
+	import java.util.List;
+	import java.util.Scanner;
+	import java.util.StringTokenizer;
+	
+	public class Main {
+	    public static int find (String s,String des) {
+	        String tmp = "";
+	        int lens = s.length();
+	        int lend = des.length();
+	        for ( int i=0; i < lens; i++ ) {
+	            int j = 0, ii = i;
+	            for ( ;j < lend; j++) {
+	                if(s.charAt(ii++) != des.charAt(j)) break;
+	            }
+	            if(j == lend) {
+	                if( ( i ==0 || s.charAt(i-1) == ' ' ) && ( i+lend == lens || s.charAt(i+lend) == ' ')) {
+	                    return i;
+	                }
+	            }
+	        }
+	        return -1;
+	    }
+	
+	    public static void main(String[] agrs) {
+	        Scanner in = new Scanner(System.in);
+	        String des = in.next();
+	        in.nextLine();
+	        String str = in.nextLine();
+	        StringTokenizer ss = new StringTokenizer(str);
+	        int cnt = 0;
+	        while(ss.hasMoreElements()) {
+	            String s = ss.nextToken();
+	            if(s.equalsIgnoreCase(des)) cnt++;
+	        }
+	        if(cnt != 0) {
+	            System.out.print(cnt + " ");
+	            str = str.toLowerCase();
+	            des = des.toLowerCase();
+	            int pos = find(str,des);
+	            System.out.println(pos);
+	        } else {
+	            System.out.println(-1);
+	        }
+	    }
+	}
 
 ## Chapter 6，7，8 面向对象
 
@@ -619,9 +695,350 @@ instanceof
 
 ## Chapter 11 多线程
 
+11.1 线程的概念
+
+11.2 Java的Thread线程类与Runnable接口
+
+Java实现多线程的方法有两种：一种是继承Java.lang包中的Thread类，另一种是用户在定义自己的类中实现Runnable接口。
+
+	// 利用Thread的类的子类来创建线程
+
+	class Thread1 extends Thread {
+	    private String who;
+	    public Thread1(String str) {
+	        who = str;
+	    }
+	    public void run() {
+	        for(int i=0;i<5;i++) {
+	            try {
+	                sleep(1000);
+	            } catch(InterruptedException e) {}
+	            System.out.println(who + " is running");
+	        }
+	    }
+	}
+	
+	public class Main {
+	    public static void main(String[] agrs) {
+	        Thread1 a = new Thread1("A");
+	        Thread1 b = new Thread1("B");
+	        a.start();
+	        b.start();
+	        System.out.println("main() is ended!") ;
+	    }
+	}
+
+
+	// 利用Runnable接口来创建线程
+	
+	import static java.lang.Thread.sleep;
+	
+	class MyThread implements Runnable {
+	    private String who;
+	    public MyThread(String str) {
+	        who = str;
+	    }
+	    public void run() {
+	        for(int i=0;i<5;i++) {
+	            try{
+	                Thread.sleep(1000);
+	            }catch(InterruptedException e) {
+	                System.out.println(e);
+	            }
+	            System.out.println(who + " is running");
+	        }
+	    }
+	}
+	
+	public class Main {
+	    public static void main(String[] agrs) {
+	        MyThread a = new MyThread("A");
+	        MyThread b = new MyThread("B");
+	        Thread aa = new Thread(a);
+	        Thread bb = new Thread(b);
+	        aa.start();
+	        bb.start();
+	    }
+	}
+
+join：当某一线程调用join方法时，其他线程会等到该线程结束后才开始执行
+
+	class MyThread extends Thread {
+	    private String who;
+	    public MyThread(String s) {
+	        who = s;
+	    }
+	    public void run() {
+	        for(int i=0;i<5;i++) {
+	            try {
+	                sleep(1000);
+	            } catch(InterruptedException e) {}
+	            System.out.println(who + " is running");
+	        }
+	    }
+	}
+	
+	public class Main {
+	    public static void main(String[] agrs) {
+	        MyThread you = new MyThread("you");
+	        MyThread she = new MyThread("she");
+	        you.start();
+	        try {
+	            you.join();
+	        } catch(InterruptedException e) {}
+	        she.start();
+	        try {
+	            she.join();
+	        } catch(InterruptedException e) {}
+	        System.out.println("main is ended");
+	    }
+	}
+
+比较两种创建线程的方式：
+
+直接继承Thread：编写简单，可以直接操控线程，但若继承Thread类就不能再继承其他类
+
+使用Runnable接口：可以将Thread类与要处理的任务的类分开，多重继承
+
+Thread类中this指的是当前线程，Runnable要在此类中获得当前线程，必须使用Thread.currentThread()
+
+线程间的数据共享
+
+多个线程的执行代码来自同一个类的run方法时，称他们共享相同的代码。
+
+	class MyThread implements Runnable {
+	    private int tickets = 10;
+	    public void run() {
+	        while(true) {
+	            if(tickets > 0) {
+	                System.out.println(Thread.currentThread().getName() + "售机票第" + tickets-- + "号");
+	            }
+	            else {
+	                System.exit(0);
+	            }
+	        }
+	    }
+	}
+	
+	public class Main {
+	    public static void main(String[] agrs) {
+	        MyThread t = new MyThread();
+	        Thread a = new Thread(t);
+	        Thread b = new Thread(t);
+	        Thread c = new Thread(t);
+	        a.start();
+	        b.start();
+	        c.start();
+	    }
+	}
+
+11.3 多线程的同步控制
+
+	class MBank {
+	    private static int sum = 2000;
+	    public synchronized static void take(int k) {
+	        int temp = sum;
+	        temp -= k;
+	        try {
+	            Thread.sleep(1000);
+	        } catch(InterruptedException e) {}
+	        sum = temp;
+	        System.out.println("sum = " + sum);
+	    }
+	}
+	
+	class Customer extends Thread {
+	    public void run() {
+	        for(int i=1;i<=4;i++) {
+	            MBank.take(100);
+	        }
+	    }
+	}
+	
+	public class Main {
+	    public static void main(String[] agrs) {
+	        Customer a = new Customer();
+	        Customer b = new Customer();
+	        a.start();
+	        b.start();
+	    }
+	}
+
+11.4 线程之间的通信
+
+	// 用两个线程模拟存票，售票过程。但要求每存入一张票，就售出一张票，售出后，再存入，直至售完为止。
+	public class Main {
+	    public static void main(String[] agrs) {
+	        Tickets t = new Tickets(10);
+	        new Producer(t).start();
+	        new Consumer(t).start();
+	    }
+	}
+	
+	class Tickets {
+	    protected int size;
+	    int number = 0;
+	    boolean available = false;
+	    public Tickets(int size) {
+	        this.size = size;
+	    }
+	
+	    public synchronized void put() {//存入
+	        if(available) {
+	            try {
+	                wait();
+	            } catch(Exception e) {}
+	        }
+	        System.out.println("存入第" + (++number) + "号票");
+	        available = true;
+	        notify();
+	    }
+	
+	    public synchronized void sell() {
+	        if(!available) {
+	            try {
+	                wait();
+	            } catch(Exception e) {}
+	        }
+	        System.out.println("售出第" + number + "号票");
+	        available = false;
+	        notify();
+	        if(number == size) {
+	            number = size + 1;
+	        }
+	    }
+	}
+	
+	class Producer extends Thread {
+	    Tickets t = null;
+	    public Producer(Tickets t) {
+	        this.t = t;
+	    }
+	    public void run() {
+	        while(t.number < t.size) {
+	            t.put();
+	        }
+	    }
+	}
+	
+	class Consumer extends Thread {
+	    Tickets t = null;
+	    public Consumer(Tickets t) {
+	        this.t = t;
+	    }
+	    public void run() {
+	        while(t.number < t.size) {
+	            t.sell();
+	        }
+	    }
+	}
 
 
 ## Chapter 12 泛型和容器类
+
+12.1 泛型
+
+12.1.1 泛型的概念
+
+12.1.2 泛型类及应用
+
+	public class Main<T> {
+	    private T obj;
+	    public T getObj() {
+	        return obj;
+	    }
+	    public void setObj(T obj) {
+	        this.obj = obj;
+	    }
+	    public static void main(String[] agrs) {
+	        Main<String> name = new Main<String>();
+	        Main<Integer> age  = new Main<Integer>();
+	        name.setObj("xiao ming");
+	        System.out.println("name: " + name.getObj());
+	        age.setObj(25);
+	        System.out.println("age: " + age.getObj());
+	    }
+	}
+
+12.1.3 泛型方法
+
+	public class Main {
+	    public static void main(String[] agrs) {
+	        Integer[] num = {1,2,3,4,5};
+	        String[] str = {"12","13","14","15","16"};
+	        Main.display(num);
+	        Main.display(str);
+	    }
+	
+	    public static<E> void display(E[] list) {
+	        for(int i=0;i<list.length;i++) {
+	            System.out.println(list[i] + " ");
+	        }
+	        System.out.println();
+	    }
+	}
+
+12.1.4 限制泛型的可用类型
+
+class App12_1_4 <T extends Number> {...}
+
+12.1.5 泛型的类型通配符和泛型数组的应用
+
+12.1.6 继承泛型类与实现泛型接口
+
+12.2 容器类
+
+12.2.1 Java容器框架
+
+12.2.2 Collection接口（均是抽象方法）
+
+12.2.3 列表List
+
+实现List接口的类主要有LinkedList和ArrayList
+
+	import java.util.ArrayList;
+	import java.util.List;
+	import java.util.ListIterator;
+	
+	public class Main {
+	    public static void main(String[] agrs) {
+	        List<Integer> al = new ArrayList<Integer>();
+	        for(int i=1;i<5;i++) {
+	            al.add(new Integer(i));
+	        }
+	        System.out.print("列表初始数据: " + al);
+	        ListIterator<Integer> it = al.listIterator();
+	        it.add(new Integer(0));
+	        System.out.print("列表数据: " + al);
+	        if(it.hasNext()) {
+	            System.out.println(it.nextIndex());
+	            System.out.println(it.next());
+	            it.set(new Integer(9));
+	            System.out.print("列表数据: " + al);
+	        }
+	        it = al.listIterator(al.size());
+	        System.out.println("reverse:");
+	        while(it.hasPrevious()) {
+	            System.out.print(it.previous() + " ");
+	        }
+	    }
+	}
+
+
+12.2.4 集合接口Set
+
+HashSet
+
+TreeSet
+
+12.2.5 映射接口Map
+
+HashMap
+
+
+
+TreeMap
+
 
 
 
@@ -1262,7 +1679,218 @@ Socket通信模式：
 
 2. 建立接受客户套接字的服务器套接字
 
+		//服务器
+		import java.io.*;
+		import java.net.ServerSocket;
+		import java.net.Socket;
+		import java.nio.Buffer;
+		
+		public class MyServer implements Runnable {
+		    ServerSocket server = null;
+		    Socket clientSocket;
+		    boolean flag = true;
+		    Thread connenThread;
+		    BufferedReader sin;
+		    DataOutputStream sout;
+		
+		    public static void main(String[] agrs) {
+		        MyServer MS = new MyServer();
+		        MS.serverStart();
+		    }
+		
+		    public void serverStart() {
+		        try {
+		            server = new ServerSocket(8080);
+		            System.out.println("端口号：" + server.getLocalPort());
+		            while(flag) {
+		                clientSocket = server.accept();
+		                System.out.println("连接已经建立完毕！");
+		                sin = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		                sout = new DataOutputStream(clientSocket.getOutputStream());
+		                connenThread = new Thread(this);
+		                connenThread.start();
+		                String aLine;
+		                while((aLine = sin.readLine()) != null) {
+		                    System.out.println(aLine);
+		                    if(aLine.equals("bye")) {
+		                        flag = false;
+		                        connenThread.interrupt();
+		                        break;
+		                    }
+		                }
+		                sout.close(); sin.close(); clientSocket.close(); System.exit(0);
+		            }
+		        } catch(Exception e) {
+		            System.out.println(e);
+		        }
+		    }
+		
+		    public void run() {
+		        while(true) {
+		            try {
+		                int ch;
+		                while((ch = System.in.read()) != -1) {
+		                    sout.write((byte)ch);
+		                    if(ch == '\n') sout.flush();
+		                }
+		            } catch(Exception e) {
+		                System.out.println(e);
+		            }
+		        }
+		    }
+		
+		    public void finalize() {
+		        try {
+		            server.close();
+		        } catch(IOException e) {
+		            System.out.println(e);
+		        }
+		    }
+		}
+
+
+		//客户端
+		import java.io.BufferedReader;
+		import java.io.DataOutputStream;
+		import java.io.InputStreamReader;
+		import java.net.Socket;
+		
+		public class MyClient implements Runnable {
+		    Socket clientSocket;
+		    boolean flag = true;
+		    Thread connenThread;
+		    BufferedReader cin ;
+		    DataOutputStream cout;
+		
+		    public static void main(String[] agrs) {
+		        new MyClient().clientStart();
+		    }
+		
+		    public void clientStart() {
+		        try {
+		            clientSocket = new Socket("localhost",8080);
+		            System.out.println("已经建立连接");
+		            while(flag) {
+		                cin = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		                cout = new DataOutputStream(clientSocket.getOutputStream());
+		                connenThread = new Thread(this);
+		                connenThread.start();
+		                String aLine;
+		                while((aLine = cin.readLine()) != null) {
+		                    System.out.println(aLine);
+		                    if(aLine.equals("bye")) {
+		                        flag = false;
+		                        connenThread.interrupt();
+		                        break;
+		                    }
+		                }
+		                cout.close(); cin.close(); clientSocket.close(); System.exit(0);
+		            }
+		        } catch(Exception e) {
+		            System.out.println(e);
+		        }
+		    }
+		
+		    public void run() {
+		        while(true) {
+		            try {
+		                int ch;
+		                while((ch = System.in.read()) != -1) {
+		                    cout.write((byte)ch);
+		                    if(ch == '\n') cout.flush();
+		                }
+		            } catch(Exception e) {
+		                System.out.println(e);
+		            }
+		        }
+		    }
+		}	
 
 
 18.3.3 无连接的数据报通信程序设计
 
+	// UDPServer
+	import javax.xml.crypto.Data;
+	import java.io.BufferedReader;
+	import java.io.IOException;
+	import java.io.InputStreamReader;
+	import java.net.DatagramPacket;
+	import java.net.DatagramSocket;
+	import java.net.InetAddress;
+	import java.nio.Buffer;
+	
+	public class UDPServer {
+	    public static void main(String[] agrs) {
+	        UDPServer frm = new UDPServer();
+	    }
+	    String strbuf = "";
+	    SerThread st;
+	    public UDPServer() {
+	        st = new SerThread();
+	        st.start();
+	    }
+	}
+	
+	class SerThread extends Thread {
+	    public void run() {
+	        String str1;
+	        try {
+	            DatagramSocket skt = new DatagramSocket(8000);
+	            System.out.println("计算机名：" + InetAddress.getLocalHost().getHostName());
+	            while(true) {
+	                byte[] inBuf = new byte[256];
+	                DatagramPacket pkt = new DatagramPacket(inBuf,inBuf.length);
+	                skt.receive(pkt);
+	                str1 = new String(pkt.getData());
+	                str1 = str1.trim();
+	                if(str1.length() > 0) {
+	                    int pot = pkt.getPort();
+	                    System.out.println("远程端口：" + pot);
+	                    System.out.println("服务器已接收到信息: " + str1);
+	                }
+	            }
+	        } catch(IOException e){}
+	    }
+	}
+
+	// Client
+	import java.io.BufferedReader;
+	import java.io.IOException;
+	import java.io.InputStreamReader;
+	import java.net.DatagramPacket;
+	import java.net.DatagramSocket;
+	import java.net.InetAddress;
+	import java.nio.Buffer;
+	
+	public class UDPClient {
+	    public static void main(String[] agrs) {
+	        UDPClient frm = new UDPClient();
+	    }
+	    CliThread ct;
+	    public UDPClient() {
+	        ct = new CliThread();
+	        ct.start();
+	    }
+	}
+	
+	class CliThread extends Thread {
+	    public void run() {
+	        String str1;
+	        String serverName = "LAPTOP-961IKQ0F";
+	        System.out.println("请发送消息给服务器 << " + serverName + " >> ");
+	        try {
+	            DatagramSocket skt = new DatagramSocket();
+	            DatagramPacket pkt;
+	            while(true) {
+	                BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
+	                System.out.println("请输入消息: ");
+	                str1 = buf.readLine();
+	                byte[] outBuf = new byte[str1.length()];
+	                outBuf = str1.getBytes();
+	                InetAddress address = InetAddress.getByName(serverName);
+	                pkt = new DatagramPacket(outBuf,outBuf.length,address,8000);
+	                skt.send(pkt);
+	            }
+	        } catch(IOException e){}
+	    }
+	}
