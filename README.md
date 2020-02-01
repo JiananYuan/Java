@@ -1,5 +1,6 @@
 # Java
 
+![](http://ipcounter.ihcr.top/)
 
 ## Chapter 1 Java语言概述
 
