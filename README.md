@@ -799,7 +799,7 @@ join：当某一线程调用join方法时，其他线程会等到该线程结束
 
 直接继承Thread：编写简单，可以直接操控线程，但若继承Thread类就不能再继承其他类
 
-使用Runnable接口：可以将Thread类与要处理的任务的类分开，多重继承
+使用Runnable接口：可以将Thread类与要处理的任务的类分开，多重继承，且可以实现数据的共享
 
 Thread类中this指的是当前线程，Runnable要在此类中获得当前线程，必须使用Thread.currentThread()
 
@@ -1048,6 +1048,10 @@ TreeMap
 13.1 图形用户界面概述
 
 13.2 图形用户界面工具包 —— Swing
+
+13.3 创建组件
+
+13.4 布局管理器
  
 	// 基本框架演示
 
@@ -1529,10 +1533,57 @@ TreeMap
 	    }
 	}
 
+创建单选按钮：
 
-13.3 创建组件
 
-13.4 布局管理器
+	import javax.swing.*;
+	import java.awt.*;
+	
+	public class Main {
+	    public static void main(String[] args) {
+	        JFrame frame = new JFrame("单选按钮");
+	        frame.setLayout(new FlowLayout());
+	        ButtonGroup bt = new ButtonGroup();
+	        JRadioButton[] jb = new JRadioButton[4];
+	        jb[0] = new JRadioButton("A.这是一个P问题");
+	        jb[1] = new JRadioButton("B.这是一个NP问题");
+	        jb[2] = new JRadioButton("C.这是一个NPC问题");
+	        jb[3] = new JRadioButton("D.这是一个NPH问题");
+	        for (int i=0;i<4;i++) {
+	            bt.add(jb[i]);
+	            frame.add(jb[i]);
+	        }
+	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        frame.setSize(400,300);
+	        frame.setVisible(true);
+	    }
+	}
+
+创建选项卡窗格：
+
+
+	import javax.swing.*;
+	
+	public class Main extends JFrame {
+	    JTabbedPane jtab = new JTabbedPane(JTabbedPane.TOP);
+	    public Main(String name) {
+	        super(name);
+	        JLabel[] lab = new JLabel[4];
+	        for (int i=0;i<4;i++) {
+	            lab[i] = new JLabel("This is " + (i+1) + " page");
+	            jtab.add("Page" + i,lab[i]);
+	        }
+	        this.add(jtab);
+	    }
+	    public static void main(String[] args) {
+	        Main frame = new Main("选项卡");
+	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        frame.setSize(400,300);
+	        frame.setVisible(true);
+	    }
+	}
+
+
 
 
 ## Chapter 14 事件处理
@@ -1573,6 +1624,55 @@ TreeMap
 
 14.18 定时器
 
+示例
+
+	import javax.swing.*;
+	import java.awt.*;
+	import java.awt.event.ItemEvent;
+	import java.awt.event.ItemListener;
+	
+	public class Main extends JFrame implements ItemListener {
+	    static Main frm = new Main();
+	    static JCheckBox chk1 = new JCheckBox("粗体");
+	    static JCheckBox chk2 = new JCheckBox("斜体");
+	    static JRadioButton rb1 = new JRadioButton("red");
+	    static JRadioButton rb2 = new JRadioButton("blue");
+	    static JTextArea ta = new JTextArea("我们一起学猫叫",8,30);
+	
+	    public static void main(String[] args) {
+	        ButtonGroup grp = new ButtonGroup();
+	        frm.setTitle("选项事件处理");
+	        frm.setLocation(200,150);
+	        frm.setSize(260,220);
+	        frm.setLayout(new FlowLayout(FlowLayout.LEFT));
+	        grp.add(rb1); grp.add(rb2);
+	        chk1.addItemListener(frm);
+	        chk2.addItemListener(frm);
+	        rb1.addItemListener(frm);
+	        rb2.addItemListener(frm);
+	        frm.add(chk1); frm.add(chk2); frm.add(rb1);
+	        frm.add(rb2); frm.add(ta);
+	        frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        frm.setVisible(true);
+	    }
+	
+	    public void itemStateChanged(ItemEvent e) {
+	        Font f1 = ta.getFont();
+	        int s1 = f1.getStyle();
+	        if(rb1.isSelected()) ta.setForeground(Color.RED);
+	        if(rb2.isSelected()) ta.setForeground(Color.BLUE);
+	        if((e.getSource() == chk1) || (e.getSource() == chk2)) {
+	            if(e.getSource() == chk1) s1 = s1 ^ 1;
+	            if(e.getSource() == chk2) s1 = s1 ^ 2;
+	            ta.setFont(new Font(f1.getName(),s1,f1.getSize()));
+	            ta.append("\n样式style = " + s1 + ";" + "状态 = " + e.getStateChange() + "[1:选中 2:取消]");
+	        }
+	    }
+	
+	}
+
+
+
 
 ## Chapter 15 绘图程序设计
 
@@ -1583,6 +1683,103 @@ TreeMap
 
 
 ## Chapter 17 Java数据库程序设计
+
+数据库基础：
+
+![MySQL](https://www.runoob.com/wp-content/uploads/2014/03/mysql.jpg)
+
+1. 启动MySQL服务器：net start mysql80  //停止：net stop mysql80
+
+2. 命令行中连接mysql服务器：mysql -u root -p
+
+3. 退出命令：exit;
+
+4. 创建数据库：create database xxx;
+
+5. 删除数据库：drop database xxx;
+
+6. 选择数据库：use xxx;
+
+7. 创建数据表：
+
+		mysql> CREATE TABLE runoob_tbl(
+		   -> runoob_id INT NOT NULL AUTO_INCREMENT,
+		   -> runoob_title VARCHAR(100) NOT NULL,
+		   -> runoob_author VARCHAR(40) NOT NULL,
+		   -> submission_date DATE,
+		   -> PRIMARY KEY ( runoob_id )
+		   -> )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+8. 查看数据表内容：select * from xxx;
+
+9. 删除数据表：drop table xxx;
+
+10. 插入数据：
+
+		mysql> INSERT INTO runoob_tbl
+		    -> (runoob_title, runoob_author, submission_date)
+		    -> VALUES
+		    -> ("学习 MySQL", "菜鸟教程", NOW());
+		Query OK, 1 row affected, 1 warning (0.01 sec)
+
+插入后效果：
+
+	+-----------+--------------+---------------+-----------------+
+	| runoob_id | runoob_title | runoob_author | submission_date |
+	+-----------+--------------+---------------+-----------------+
+	|         1 | 学习 PHP     | 菜鸟教程      | 2020-02-06      |
+	|         2 | 学习 MySQL   | 菜鸟教程      | 2020-02-06      |
+	|         3 | JAVA 教程    | RUNOOB.COM    | 2016-05-06      |
+	+-----------+--------------+---------------+-----------------+
+
+11. 筛选查找：select * from xxx(某数据表) WHERE xxx(关键字)='xxx'(指定内容);
+
+12. 更新数据：update runoob_tbl SET runoob_title='学习C++' WHERE runoob_id=3;
+
+13. 删除数据：delete from runoob_tbl WHERE runoob_id=1;
+
+14. 模糊搜索语句：select * from runoob_tbl where runoob_author like "%COM";
+
+		+-----------+--------------+---------------+-----------------+
+		| runoob_id | runoob_title | runoob_author | submission_date |
+		+-----------+--------------+---------------+-----------------+
+		|         3 | 学习C++      | RUNOOB.COM    | 2016-05-06      |
+		|         4 | Java编程思想 | ORACLE.COM    | 2020-02-06      |
+		+-----------+--------------+---------------+-----------------+
+
+15. 合并查询操作：
+
+![](https://www.runoob.com/wp-content/uploads/2013/09/union1.jpg)
+
+另一个例子：
+
+![](https://www.runoob.com/wp-content/uploads/2013/09/AAA99C7B-36A5-43FB-B489-F8CE63B62C71.jpg)
+
+16. 排序：select * from runoob_tbl ORDER BY submission_date ASC;
+
+17. GROUP BY语句，连接语句，NULL值处理，正则表达式，
+
+18. MySQL事务：
+
+### 原子性：
+
+一个事务（transaction）中的所有操作，要么全部完成，要么全部不完成，不会结束在中间某个环节。事务在执行过程中发生错误，会被回滚（Rollback）到事务开始前的状态，就像这个事务从来没有执行过一样。
+
+### 一致性：
+
+在事务开始之前和事务结束以后，数据库的完整性没有被破坏。这表示写入的资料必须完全符合所有的预设规则，这包含资料的精确度、串联性以及后续数据库可以自发性地完成预定的工作。
+
+### 隔离性：
+
+数据库允许多个并发事务同时对其数据进行读写和修改的能力，隔离性可以防止多个事务并发执行时由于交叉执行而导致数据的不一致。事务隔离分为不同级别，包括读未提交（Read uncommitted）、读提交（read committed）、可重复读（repeatable read）和串行化（Serializable）。
+
+### 持久性：
+
+事务处理结束后，对数据的修改就是永久的，即便系统故障也不会丢失。
+
+JDBC(Java Database Connectivity)是java访问数据库的标准API
+
+
 
 
 
@@ -1678,7 +1875,30 @@ Socket通信模式：
 
 1. 客户建立到服务器的套接字对象
 
+用getinputstream可以获得服务器向客户端的发送流
+
+getoutputstream可以获得客户端向服务器的输出流
+
+连接到数据流datainputstream和dataoutputstream上是为了更好的从流中获取信息
+
 2. 建立接受客户套接字的服务器套接字
+
+Socket通信步骤如下：
+
+1）在服务器端创建一个ServerSocket对象，并指定端口号
+
+2）运行ServerSocket的accept方法，等候客户端请求
+
+3）客户端创建一个Socket对象，指定计算机地址和端口号，向服务器端发出连接请求
+
+4）服务器端接受到客户端请求后，创建Socket对象与客户端建立连接
+
+5）服务器端和客户端分别建立输入输出数据流，进行数据传输
+
+6）通信结束后，服务器端和客户端分别关闭相应的Socket链接
+
+7）服务器端程序运行结束后，调用ServerSocket对象close方法停止等候客户端请求
+
 
 		//服务器
 		import java.io.*;
