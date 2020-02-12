@@ -2030,6 +2030,28 @@ Socket通信步骤如下：
 
 18.3.3 无连接的数据报通信程序设计
 
+数据报发送过程：
+
+1）创建一个发送数据的DatagramPacket对象，包含下列信息：
+
+·要发送的数据长度
+
+·数据报分组的长度
+
+·发送目的地主机IP地址和目的端口号
+
+2）在指定的或可用的本机端口创建DatagramSocket对象
+
+3）调用DatagramSocket对象的Send方法，以Datagrampacket对象为参数发送数据报
+
+数据报接收过程：
+
+1）创建一个用于接收数据报的datagrampacket对象，其中包含空白数据缓冲区和指定数据报分组的长度
+
+2）在指定的或可用的本机端口创建datagramsocket对象
+
+3）调用datagramsocket对象的receive方法，以datagrampacket对象为参数接收数据报
+
 	// UDPServer
 	import javax.xml.crypto.Data;
 	import java.io.BufferedReader;
