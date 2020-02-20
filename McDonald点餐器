@@ -1,0 +1,201 @@
+// KFCFrame类
+import javax.swing.*;
+
+public class KFCframe extends JFrame {
+    public KFCframe(String name) {
+        super(name);
+        // setLayout(null);
+        setSize(400,600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setIconImage(new ImageIcon("mc.png").getImage());
+        // setvisible我们还是放到界面设计最后再来加吧
+    }
+}
+
+
+
+// QRCode类
+import javax.swing.*;
+import java.awt.*;
+
+public class QRCode extends JFrame {
+    public QRCode(String name) {
+        super(name);
+        setSize(400,300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JLabel qr = new JLabel(new ImageIcon("qr.png"));
+        add(qr);
+        setLocation(700,350);
+        setVisible(true);
+    }
+}
+
+
+// Main类
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+import static java.awt.event.KeyEvent.VK_ENTER;
+
+public class Main {
+    static JTabbedPane tab = new JTabbedPane(JTabbedPane.LEFT);
+    static JPanel mainfood = new JPanel(null);
+    static JPanel drink = new JPanel(null);
+    static JCheckBox f1 = new JCheckBox("汉堡王");
+    static JCheckBox f2 = new JCheckBox("大薯条");
+    static JCheckBox f3 = new JCheckBox("香鸡卷");
+    static JCheckBox f4 = new JCheckBox("奥尔良鸡翅");
+    static JCheckBox d1 = new JCheckBox("Cola");
+    static JCheckBox d2 = new JCheckBox("milk");
+    static JLabel ff1 = new JLabel(new ImageIcon("hambuger.png"));
+    static JLabel ff2 = new JLabel(new ImageIcon("chip.png"));
+    static JLabel ff3 = new JLabel(new ImageIcon("juan.png"));
+    static JLabel ff4 = new JLabel(new ImageIcon("chi.png"));
+    static JLabel dd1 = new JLabel(new ImageIcon("cola.png"));
+    static JLabel dd2 = new JLabel(new ImageIcon("milk.png"));
+    static JButton submit1 = new JButton("submit");
+    static JButton submit2 = new JButton("submit");
+    static int sum  = 0;
+    static BoxListener box = new BoxListener();
+    static JLabel prompt1 = new JLabel("已经点了" + sum + "元");
+    static JLabel prompt2 = new JLabel("已经点了" + sum + "元");
+    static KFCframe kfc = new KFCframe("McDonald's 自助点餐");
+
+    static class BoxListener implements ItemListener {
+
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            JCheckBox tmp = (JCheckBox)e.getSource();
+            int state = e.getStateChange();
+            if(state == ItemEvent.DESELECTED) { // 取消选中
+                if(tmp == f1) sum -= 18;
+                if(tmp == f2) sum -= 14;
+                if(tmp == f3) sum -= 16;
+                if(tmp == f4) sum -= 14;
+                if(tmp == d1) sum -= 15;
+                if(tmp == d2) sum -= 12;
+            } else {
+                if(tmp == f1) sum += 18;
+                if(tmp == f2) sum += 14;
+                if(tmp == f3) sum += 16;
+                if(tmp == f4) sum += 14;
+                if(tmp == d1) sum += 15;
+                if(tmp == d2) sum += 12;
+            }
+            prompt1.setText("已经点了" + sum + "元");
+            prompt2.setText("已经点了" + sum + "元");
+        }
+    }
+
+    public static class MyFont extends Font {
+        public MyFont() {
+            super("微软雅黑", Font.BOLD,20);
+        }
+    }
+
+    static class SubmitListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String yourfood = "您点了:\n";
+            if(f1.isSelected()) yourfood += "汉堡王 \n";
+            if(f2.isSelected()) yourfood += "大薯条 \n";
+            if(f3.isSelected()) yourfood += "香鸡卷 \n";
+            if(f4.isSelected()) yourfood += "奥尔良鸡翅 \n";
+            if(d1.isSelected()) yourfood += "牛奶 \n";
+            if(d2.isSelected()) yourfood += "可乐 \n";
+            yourfood += ("\n总共" + sum + "元, 请确认...");
+
+            int state = JOptionPane.showConfirmDialog(kfc,yourfood);
+            if(state == JOptionPane.YES_OPTION) {
+                kfc.dispose();
+                QRCode qr = new QRCode("请扫描二维码完成支付");
+                Timer t = new Timer(15000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        qr.dispose();
+                        System.exit(0);
+                    }
+                });// 15s = 15 * 1000 ms;
+                qr.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowOpened(WindowEvent e) {
+                        t.start();
+                    }
+                });
+
+            }
+
+        }
+    }
+
+    static class submitKey extends KeyAdapter {
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode() == VK_ENTER)
+                submit1.doClick(); // 让程序虚拟点一下按钮
+        }
+    }
+
+    public static void main(String[] args) {
+
+        f1.setBounds(30,180,90,50);   f1.setFont(new MyFont()); f1.addItemListener(box);
+        f2.setBounds(166,180,90,50);  f2.setFont(new MyFont()); f2.addItemListener(box);
+        f3.setBounds(30,360,90,50);   f3.setFont(new MyFont()); f3.addItemListener(box);
+        f4.setBounds(166,360,150,50); f4.setFont(new MyFont()); f4.addItemListener(box);
+        mainfood.add(f1); mainfood.add(f2); mainfood.add(f3); mainfood.add(f4);
+
+        ff1.setBounds(30,70,100,100); ff2.setBounds(160,70,100,100);
+        ff3.setBounds(30,250,100,100); ff4.setBounds(160,250,100,100);
+
+        mainfood.add(ff1); mainfood.add(ff2);
+        mainfood.add(ff3); mainfood.add(ff4);
+
+        submit1.setBounds(90,450,120,40);
+        submit1.setBackground(Color.GREEN);
+        submit1.setFont(new MyFont());
+        submit1.addActionListener(new SubmitListener());
+        mainfood.add(submit1);
+
+        prompt1.setBounds(90,500,160,40);
+        prompt1.setFont(new MyFont());
+        mainfood.add(prompt1);
+
+        d1.setBounds(40,200,100,50); d1.setFont(new MyFont());  d1.addItemListener(box);
+        d2.setBounds(180,200,100,50); d2.setFont(new MyFont());  d2.addItemListener(box);
+        drink.add(d1); drink.add(d2);
+
+        dd1.setBounds(30,80,100,100); dd2.setBounds(170,80,100,100);
+        drink.add(dd1); drink.add(dd2);
+
+        submit2.setBounds(90,450,120,40);
+        submit2.setBackground(Color.GREEN);
+        submit2.setFont(new MyFont());
+        submit2.addActionListener(new SubmitListener());
+        drink.add(submit2);
+
+        prompt2.setBounds(90,500,160,40);
+        prompt2.setFont(new MyFont());
+        drink.add(prompt2);
+
+        f1.addKeyListener(new submitKey());
+        f2.addKeyListener(new submitKey());
+        f3.addKeyListener(new submitKey());
+        f4.addKeyListener(new submitKey());
+        d1.addKeyListener(new submitKey());
+        d2.addKeyListener(new submitKey());
+        submit1.addKeyListener(new submitKey());
+        submit2.addKeyListener(new submitKey());
+
+        tab.add("主食",mainfood);
+        tab.add("饮品",drink);
+
+        kfc.add(tab);
+        kfc.setVisible(true);
+    }
+}
+
+
