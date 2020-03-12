@@ -1,0 +1,20 @@
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.*;
+import java.nio.Buffer;
+
+public class Main {
+    public static void main(String[] agrs) throws Exception {
+        URL url = new URL("https://www.dianping.com");
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36");
+        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(),"UTF-8"));
+        String s;
+        while((s=br.readLine()) != null) {
+            System.out.println(s);
+        }
+        br.close();
+    }
+}
