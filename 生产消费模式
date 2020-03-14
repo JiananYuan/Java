@@ -1,0 +1,67 @@
+import java.util.LinkedList;
+
+public class Main {
+    public static void main(String[] args) {
+        Product t = new Product(10); // 资源
+        new Producer(t).start();
+        new Consumer(t).start();
+    }
+}
+
+class Product {
+    private int maxSize;
+    private int index;
+    private LinkedList<Integer> v;
+    public Product(int n) {
+        maxSize = n;
+        index = 0;
+        v = new LinkedList<>();
+    }
+    synchronized void push()  {
+        if (v.size() == maxSize) {
+            try {
+                wait();
+            } catch (Exception e) {}
+        }
+        System.out.println("生产了第" + (index+1) + "件产品");
+        v.add(index);
+        index++;
+        notify();
+    }
+    synchronized void pop() {
+        if(v.size() == 0) {
+            try {
+                wait();
+            } catch (Exception e) {}
+        }
+        int tmp = v.pop();
+        System.out.println("消费了第" + (tmp+1) + "件产品");
+        notify();
+    }
+}
+
+class Producer extends Thread {
+    private Product t;
+    public Producer(Product t) {
+        this.t = t;
+    }
+    @Override
+    public void run() {
+        while(true) {
+            t.push();
+        }
+    }
+}
+
+class Consumer extends Thread {
+    private Product t;
+    public Consumer(Product t) {
+        this.t = t;
+    }
+    @Override
+    public void run() {
+        while(true) {
+            t.pop();
+        }
+    }
+}
